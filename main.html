@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuera Lab | Architect Registration</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- ENTERPRISE DESIGN TOKENS --- */
+        :root {
+            --transition-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a0a;
+            --surface-color: #111111;
+            --surface-border: #262626;
+            --text-primary: #ededed;
+            --text-secondary: #a3a3a3;
+            --accent-primary: #ffffff;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --nav-glass: rgba(10, 10, 10, 0.85);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            --grid-pattern: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.05)"/></svg>');
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color);
+            background-image: var(--grid-pattern);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Ambient Orbs */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.2;
+            z-index: 0;
+            pointer-events: none;
+            animation: cinematicDrift 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .orb-1 { width: 50vw; height: 50vw; max-width: 600px; max-height: 600px; background: radial-gradient(circle, var(--accent-blue) 0%, transparent 70%); top: -10%; left: -10%; }
+        .orb-2 { width: 40vw; height: 40vw; max-width: 500px; max-height: 500px; background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%); bottom: -10%; right: -5%; animation-duration: 25s; animation-delay: -5s; }
+
+        @keyframes cinematicDrift { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(3vw, 2vh) scale(1.05); } 100% { transform: translate(-2vw, -3vh) scale(0.95); } }
+
+        /* Form Card */
+        .registration-card {
+            background: var(--surface-color); 
+            border: 1px solid var(--surface-border);
+            width: 100%; max-width: 800px; 
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg); 
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s var(--transition-cinematic) forwards;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Inputs */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--surface-border);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a3a3a3' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .form-select option {
+            background: var(--surface-color);
+            color: var(--text-primary);
+        }
+
+        /* Custom Checkbox */
+        .custom-checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox-wrapper:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-blue);
+            border-radius: 6px;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:checked {
+            background: var(--accent-blue);
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Loader */
+        .spinner {
+            border: 3px solid var(--surface-border); border-top: 3px solid var(--accent-blue);
+            border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Background -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <div class="registration-card flex flex-col">
+        <!-- Header -->
+        <div class="p-8 border-b border-[var(--surface-border)] bg-[var(--surface-color)] shrink-0 text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-blue)] rounded-full blur-[60px] opacity-20 -mr-10 -mt-10 pointer-events-none"></div>
+            
+            <div class="w-16 h-16 bg-[var(--bg-color)] border border-[var(--surface-border)] rounded-xl flex items-center justify-center mx-auto shadow-lg mb-4">
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 26V7C8 5.89543 8.89543 5 10 5H13L24 20.5V26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M24 6V25C24 26.1046 23.1046 27 22 27H19L8 11.5V6" stroke="var(--accent-blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            
+            <h1 class="text-3xl font-extrabold tracking-tight text-[var(--text-primary)]">
+                Initialize <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Architect Profile</span>
+            </h1>
+            <p class="text-[var(--text-secondary)] mt-2 max-w-lg mx-auto text-sm">
+                Complete your deployment profile to access the Nuera Lab ecosystem.
+            </p>
+        </div>
+
+        <!-- Form Body -->
+        <div class="p-8 relative">
+            <form id="registration-form" class="space-y-6">
+                
+                <!-- Row 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-name">Full Legal Name</label>
+                        <input type="text" id="reg-name" class="form-input" placeholder="e.g. Alan Turing" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-email">Primary Email Address</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="e.g. alan@nexus.io" required>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-phone">Contact Number</label>
+                        <div class="flex">
+                            <span id="dial-code-prefix" class="flex items-center justify-center px-3 border border-r-0 border-[var(--surface-border)] bg-[var(--surface-color)] text-[var(--text-secondary)] rounded-l-lg font-medium min-w-[3.5rem]">
+                                +?
+                            </span>
+                            <input type="tel" id="reg-phone" class="form-input !rounded-l-none" placeholder="(555) 000-0000" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-age">Age</label>
+                        <input type="number" id="reg-age" class="form-input" placeholder="Enter age" min="13" max="120" required>
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-exp">Coding Experience</label>
+                        <select id="reg-exp" class="form-select" required>
+                            <option value="" disabled selected>Select your level...</option>
+                            <option value="never">Never Coded Before</option>
+                            <option value="beginner">Beginner (Basic Syntax)</option>
+                            <option value="intermediate">Intermediate (Building Projects)</option>
+                            <option value="expert">Expert (Professional Architect)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-country">Country of Residence</label>
+                        <select id="reg-country" class="form-select" required>
+                            <option value="" disabled selected>Select your country...</option>
+                            <!-- Injected via JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Opt-in Checkbox -->
+                <label class="custom-checkbox-wrapper group mt-2">
+                    <input type="checkbox" id="reg-premium" class="custom-checkbox">
+                    <div>
+                        <div class="font-bold text-[var(--text-primary)] text-sm mb-1 flex items-center gap-2">
+                            Enter Early Access Draw
+                            <span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-full border border-blue-500/30 uppercase tracking-widest">Priority</span>
+                        </div>
+                        <div class="text-[13px] text-[var(--text-secondary)]">
+                            Check this box to register yourself among the lucky winners for a lifetime Nuera+ subscription. (First 10 verified profiles are guaranteed).
+                        </div>
+                    </div>
+                </label>
+
+                <div id="form-error" class="hidden p-3 bg-red-900/20 text-red-400 text-sm rounded-lg border border-red-900/50 text-center">
+                    Please complete all required fields.
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4 border-t border-[var(--surface-border)]">
+                    <button type="submit" id="submit-btn" class="w-full bg-white text-black font-semibold py-3.5 px-8 rounded-xl hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2">
+                        Finalize Deployment Profile
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="hidden absolute inset-0 bg-[var(--surface-color)] z-20 flex-col items-center justify-center rounded-b-20">
+                <div class="spinner mb-4"></div>
+                <h3 class="text-xl font-bold text-white mb-2">Syncing Profile</h3>
+                <p class="text-[var(--text-secondary)] text-sm">Registering architect parameters with Nexus Systems...</p>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-state" class="hidden absolute inset-0 bg-[var(--surface-color)] z-30 flex-col items-center justify-center text-center px-8 rounded-b-20">
+                <div class="mb-6 rounded-full p-4 bg-emerald-900/30 border border-emerald-500/30">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h2 class="text-3xl font-extrabold mb-4 text-emerald-400">Profile Initialized</h2>
+                <p id="success-desc" class="text-[var(--text-secondary)] mb-8 max-w-md">
+                    Welcome to the ecosystem. Your parameters have been successfully registered.
+                </p>
+                <button onclick="window.location.href='https://anayupadhyay-all.github.io/Nueralab/'" class="bg-white text-black font-semibold py-3 px-8 rounded-full hover:bg-gray-200 transition-colors">
+                    Enter Nuera Lab
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RENDER_API = "https://nueralabback.onrender.com/api/v1/sync/user-profiles";
+
+        // Auto-fill email if available from previous Google Auth
+        const userSession = JSON.parse(localStorage.getItem('nuerlab_user'));
+        const sessionUserId = userSession ? userSession.uid : "user_" + Math.floor(Math.random()*100000);
+        if (userSession && userSession.email) {
+            document.getElementById('reg-email').value = userSession.email;
+            if (userSession.name) document.getElementById('reg-name').value = userSession.name;
+        }
+
+        // Populate Countries List with Dial Codes
+        const countriesData = [
+            { name: "United States", code: "+1" }, { name: "United Kingdom", code: "+44" },
+            { name: "Canada", code: "+1" }, { name: "Australia", code: "+61" },
+            { name: "India", code: "+91" }, { name: "Germany", code: "+49" },
+            { name: "France", code: "+33" }, { name: "Japan", code: "+81" },
+            { name: "Brazil", code: "+55" }, { name: "South Africa", code: "+27" },
+            { name: "Nigeria", code: "+234" }, { name: "Mexico", code: "+52" },
+            { name: "Spain", code: "+34" }, { name: "Italy", code: "+39" },
+            { name: "Netherlands", code: "+31" }, { name: "Sweden", code: "+46" },
+            { name: "Switzerland", code: "+41" }, { name: "Singapore", code: "+65" },
+            { name: "United Arab Emirates", code: "+971" }, { name: "New Zealand", code: "+64" },
+            { name: "Ireland", code: "+353" }, { name: "Argentina", code: "+54" },
+            { name: "Colombia", code: "+57" }, { name: "Kenya", code: "+254" },
+            { name: "Egypt", code: "+20" }, { name: "South Korea", code: "+82" },
+            { name: "Indonesia", code: "+62" }, { name: "Malaysia", code: "+60" },
+            { name: "Philippines", code: "+63" }
+        ];
+        
+        const countrySelect = document.getElementById('reg-country');
+        const dialCodePrefix = document.getElementById('dial-code-prefix');
+
+        countriesData.sort((a, b) => a.name.localeCompare(b.name)).forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.name;
+            option.textContent = country.name;
+            option.dataset.code = country.code; // Store the code in the dataset
+            countrySelect.appendChild(option);
+        });
+
+        // Automatically update the dial code prefix when country is selected
+        countrySelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.dataset.code) {
+                dialCodePrefix.textContent = selectedOption.dataset.code;
+                dialCodePrefix.classList.add("text-[var(--text-primary)]");
+            } else {
+                dialCodePrefix.textContent = '+?';
+                dialCodePrefix.classList.remove("text-[var(--text-primary)]");
+            }
+        });
+
+        // Form Handling
+        const form = document.getElementById('registration-form');
+        const errorDiv = document.getElementById('form-error');
+        const loadingState = document.getElementById('loading-state');
+        const successState = document.getElementById('success-state');
+        const successDesc = document.getElementById('success-desc');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorDiv.classList.add('hidden');
+
+            const payload = {
+                userId: sessionUserId,
+                name: document.getElementById('reg-name').value.trim(),
+                email: document.getElementById('reg-email').value.trim(),
+                phone: (dialCodePrefix.textContent !== '+?' ? dialCodePrefix.textContent + ' ' : '') + document.getElementById('reg-phone').value.trim(),
+                age: parseInt(document.getElementById('reg-age').value),
+                experience: document.getElementById('reg-exp').value,
+                country: document.getElementById('reg-country').value,
+                wantsPremiumOptIn: document.getElementById('reg-premium').checked,
+                timestamp: new Date().toISOString()
+            };
+
+            // Basic validation
+            if (!payload.name || !payload.email || !payload.phone || !payload.age || !payload.experience || !payload.country) {
+                errorDiv.textContent = "Please complete all required fields.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Show Loading
+            loadingState.classList.remove('hidden');
+            loadingState.classList.add('flex');
+
+            try {
+                // Send to real Render Backend (Connecting to MongoDB)
+                const response = await fetch(RENDER_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned status ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Hide loading, show success
+                loadingState.classList.remove('flex');
+                loadingState.classList.add('hidden');
+                
+                successState.classList.remove('hidden');
+                successState.classList.add('flex');
+
+                // Using backend response to tailor the success message
+                if (data.isPremium) {
+                    successDesc.innerHTML = `Welcome to the ecosystem, <strong class="text-white">${payload.name}</strong>. Congratulations, you were one of the first 10 users and have been granted a <strong class="text-amber-400">Lifetime Premium Subscription</strong>!`;
+                } else {
+                    successDesc.innerHTML = `Welcome to the ecosystem, <strong class="text-white">${payload.name}</strong>. Your standard Architect profile has been verified and deployed.`;
+                }
+
+            } catch (error) {
+                console.error("API Error:", error);
+                
+                // Hide loading, show real error message (no fake fallback)
+                loadingState.classList.remove('flex');
+                loadingState.classList.add('hidden');
+                
+                errorDiv.textContent = "Connection to server failed. Please ensure your backend is running and try again.";
+                errorDiv.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
